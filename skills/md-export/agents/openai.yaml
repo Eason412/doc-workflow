@@ -1,4 +1,4 @@
 interface:
-  display_name: "Markdown 转 PDF"
-  short_description: "把一般 Markdown 文档转成可打印的 PDF"
-  default_prompt: "Use $md-export to convert this Markdown file into a clean A4 PDF."
+  display_name: "Markdown 导出 Word / PDF"
+  short_description: "把已有 Markdown 稿按通用、学术或公文范式导出为 Word 或 PDF"
+  default_prompt: "Use $md-export to export this Markdown draft as Word or PDF using the appropriate layout preset."

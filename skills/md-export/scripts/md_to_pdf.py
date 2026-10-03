@@ -255,7 +255,7 @@ def convert(args: argparse.Namespace) -> dict:
     fmt = "markdown+hard_line_breaks" if args.hard_line_breaks else "markdown"
     base = [pandoc, str(md), "-f", fmt]
 
-    with tempfile.TemporaryDirectory(prefix="md-to-pdf-", ignore_cleanup_errors=True) as tmp_s:
+    with tempfile.TemporaryDirectory(prefix="md-export-", ignore_cleanup_errors=True) as tmp_s:
         tmp = Path(tmp_s)
 
         # Parse once to learn the document title and whether the body has its own H1.

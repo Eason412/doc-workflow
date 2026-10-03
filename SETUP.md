@@ -35,11 +35,11 @@ Only prepare tools for the functions that will be used. The agent records what i
 | Function | Required tools | Source |
 | --- | --- | --- |
 | POSIX linking | POSIX `sh`, `mkdir`, `date`, `basename`, `dirname`, `readlink`, `rm`, `mv`, `ln` | [Linking script](scripts/link-skills.sh) |
-| Writing, translation, wording edits | An agent able to read the Skill and input files | Skill entry points (Chinese): [doc-sync](skills/doc-sync/SKILL.md), [translate](skills/translate/SKILL.md), [trim-hedging](skills/trim-hedging/SKILL.md) |
-| README link checks | uv, Python ≥ 3.10, `markdown-it-py>=3` | [Checker inline metadata](skills/doc-sync/scripts/check_readme.py) |
-| Markdown-to-PDF conversion | uv, Python ≥ 3.10, `pymupdf>=1.24`, Pandoc, Chrome / Chromium / Edge | [Converter](skills/md-to-pdf/scripts/md_to_pdf.py) |
-| Chinese and English PDF text | Installed fonts covering the document's characters | [Print styles](skills/md-to-pdf/assets/print.css) |
-| Optional font diagnosis | `pdffonts` | [Troubleshooting](skills/md-to-pdf/references/qa.md) (Chinese) |
+| Writing, translation, wording edits | An agent able to read the Skill and input files | Skill entry points (Chinese): [project-docs](skills/project-docs/SKILL.md), [translate](skills/translate/SKILL.md), [trim-hedging](skills/trim-hedging/SKILL.md) |
+| README link checks | uv, Python ≥ 3.10, `markdown-it-py>=3` | [Checker inline metadata](skills/project-docs/scripts/check_readme.py) |
+| Markdown-to-PDF conversion | uv, Python ≥ 3.10, `pymupdf>=1.24`, Pandoc, Chrome / Chromium / Edge | [Converter](skills/md-export/scripts/md_to_pdf.py) |
+| Chinese and English PDF text | Installed fonts covering the document's characters | [Print styles](skills/md-export/assets/print.css) |
+| Optional font diagnosis | `pdffonts` | [Troubleshooting](skills/md-export/references/qa.md) (Chinese) |
 
 PDF inputs for translation require the host's PDF reading capability; the translation Skill specifies no separate PDF extraction package or translation service. Git is additionally required when the checker uses `--require-tracked`.
 
@@ -73,7 +73,7 @@ The only documented option is `--dry-run`. The script resolves the repository fr
 | Codex | `${CODEX_HOME:-$HOME/.codex}/skills` | `${CODEX_HOME:-$HOME/.codex}/skills-backup` |
 | Claude Code | `$HOME/.claude/skills` | `$HOME/.claude/skills-backup` |
 
-An already-correct symbolic link is skipped when its stored target exactly matches the absolute source path. A different symbolic link is removed and replaced. An existing real directory or file is moved into the sibling `skills-backup/` directory as `<name>-<YYYYMMDDHHMMSS>` before link creation. The script installs every directory under `skills/` into both host directories, even if only one host is currently used.
+An already-correct symbolic link is skipped when its stored target exactly matches the absolute source path. A different symbolic link is removed and replaced. An existing real directory or file is moved into the sibling `skills-backup/` directory as `<name>-<YYYYMMDDHHMMSS>` before link creation. The script installs every directory under `skills/` into both host directories, even if only one host is currently used. Finally, a symbolic link in either host directory that points into this checkout's `skills/` but no longer resolves, left by a renamed or removed Skill, is removed and reported as `pruned`.
 
 If `CODEX_HOME` is set, inspect and confirm it before preview; the same value must be used for application. Empty or unset `CODEX_HOME` selects `$HOME/.codex`.
 
@@ -82,7 +82,7 @@ Success means the preview lists the expected source and destination paths, repla
 For a single Skill or a single host, skip the script and link by hand. Set `name` and `target` to the chosen Skill and host directory, inspect the destination, and present the result before changing anything:
 
 ```sh
-name=doc-sync
+name=project-docs
 target="$HOME/.claude/skills"   # or "${CODEX_HOME:-$HOME/.codex}/skills"
 ls -ld "$target/$name" 2>/dev/null || echo "free    $target/$name"
 ```
@@ -119,7 +119,7 @@ Inspect the resulting targets:
 ```sh
 (
 for target in "${CODEX_HOME:-$HOME/.codex}/skills" "$HOME/.claude/skills"; do
-  for name in doc-sync translate trim-hedging md-to-pdf; do
+  for name in project-docs translate trim-hedging md-export; do
     test -L "$target/$name" || exit 1
     test "$(readlink "$target/$name")" = "$(pwd -P)/skills/$name" || exit 1
     test -f "$target/$name/SKILL.md" || exit 1
@@ -239,9 +239,9 @@ For hosts other than the two targeted by the installer, use the host's documente
 The link checker can validate this checkout without changing documents:
 
 ```sh
-uv run --no-project skills/doc-sync/scripts/check_readme.py --repo . --json
-uv run --no-project skills/doc-sync/scripts/check_readme.py --repo . --file README.en.md --json
-uv run --no-project skills/doc-sync/scripts/check_readme.py --repo . --file SETUP.md --json
+uv run --no-project skills/project-docs/scripts/check_readme.py --repo . --json
+uv run --no-project skills/project-docs/scripts/check_readme.py --repo . --file README.en.md --json
+uv run --no-project skills/project-docs/scripts/check_readme.py --repo . --file SETUP.md --json
 ```
 
 Success means each JSON report contains `"ok": true` and no issues. Add `--require-tracked` only when linked documents are expected to be in the Git index; an initial checkout without commits can omit it. The checker does not validate external links, heading anchors, command execution, business behavior, or writing quality. An uncached uv environment may require downloads, so a network-restricted run should use existing caches and offline mode.
@@ -249,16 +249,16 @@ Success means each JSON report contains `"ok": true` and no issues. Add `--requi
 For PDF functionality, after approval of a conversion using a disposable input and output:
 
 ```sh
-uv run --no-project skills/md-to-pdf/scripts/md_to_pdf.py input.md --output output.pdf --paper-size A4 --orientation portrait
+uv run --no-project skills/md-export/scripts/md_to_pdf.py input.md --output output.pdf --paper-size A4 --orientation portrait
 ```
 
-Replace `input.md` and `output.pdf` with agreed test paths; an existing output is replaced on successful conversion. A useful test input includes Chinese and English text, a relative image, a formula, a wide table, and a long code line. The JSON must report a readable PDF with nonzero pages and the requested dimensions. Inspect rendered images of the first page and pages containing images, formulas, and wide tables. Warnings and uninspected content remain explicit in the handover; static JSON validation alone does not establish visual fidelity. Full options and inspection requirements are in [md-to-pdf](skills/md-to-pdf/SKILL.md) (Chinese).
+Replace `input.md` and `output.pdf` with agreed test paths; an existing output is replaced on successful conversion. A useful test input includes Chinese and English text, a relative image, a formula, a wide table, and a long code line. The JSON must report a readable PDF with nonzero pages and the requested dimensions. Inspect rendered images of the first page and pages containing images, formulas, and wide tables. Warnings and uninspected content remain explicit in the handover; static JSON validation alone does not establish visual fidelity. Full options and inspection requirements are in [md-export](skills/md-export/SKILL.md) (Chinese).
 
 Text-only Skills need no package smoke test. Their success criterion is accessible instructions and a task outcome checked against the corresponding rules.
 
 ## 🔄 8. Updates and maintenance
 
-The author edits `skills/<name>/` directly in the checkout, validates the affected Skill, and then commits and pushes. Linked installations use the same files. Adding a Skill requires another `scripts/link-skills.sh --dry-run`, approval of new changes, and `scripts/link-skills.sh`; on native Windows, repeat the PowerShell preview and application. Moving the checkout requires relinking after a new preview.
+The author edits `skills/<name>/` directly in the checkout, validates the affected Skill, and then commits and pushes. Linked installations use the same files. Adding, renaming or removing a Skill requires another `scripts/link-skills.sh --dry-run`, approval of new changes, and `scripts/link-skills.sh`; on native Windows, repeat the PowerShell preview and application. Moving the checkout requires relinking after a new preview.
 
 Important writing-rule changes use a blind writing comparison: an evaluator sees only the instructions and writes from scratch; the result is then compared with an accepted draft. Project regression commands are in [AGENTS.md](AGENTS.md) (Chinese), and PR requirements are in [CONTRIBUTING.md](CONTRIBUTING.md) (Chinese). These maintenance operations are separate from installation authorization.
 

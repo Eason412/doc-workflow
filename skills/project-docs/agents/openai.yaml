@@ -1,0 +1,4 @@
+interface:
+  display_name: "项目文档与 README"
+  short_description: "按代码现状撰写、审阅或更新 README、项目文档与交接说明"
+  default_prompt: "使用 $project-docs 为这个仓库撰写中英文 README，并检查本地链接。"

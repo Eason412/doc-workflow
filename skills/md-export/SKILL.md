@@ -1,5 +1,5 @@
 ---
-name: md-to-pdf
+name: md-export
 description: "把一般 Markdown 文档转成可打印的 PDF（Pandoc + Chrome），处理纸张方向、表格、代码块换行和中英文字体。需要课程报告封面、目录、章节分页和国标参考文献时用 course-report。"
 ---
 

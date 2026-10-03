@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "skills/doc-sync/**"
-      - "skills/md-to-pdf/**"
+      - "skills/project-docs/**"
+      - "skills/md-export/**"
       - ".github/workflows/skills.yml"
   pull_request:
     paths:
-      - "skills/doc-sync/**"
-      - "skills/md-to-pdf/**"
+      - "skills/project-docs/**"
+      - "skills/md-export/**"
       - ".github/workflows/skills.yml"
 
 permissions:
@@ -27,9 +27,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - skill: doc-sync
+          - skill: project-docs
             with: markdown-it-py
-          - skill: md-to-pdf
+          - skill: md-export
             with: pymupdf
     defaults:
       run:
@@ -37,10 +37,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v10.2.0
-      # md-to-pdf 的真实转换测试需要 Pandoc 和中文字体；Chrome 由 runner 自带
-      - if: matrix.skill == 'md-to-pdf'
+      # md-export 的真实转换测试需要 Pandoc 和中文字体；Chrome 由 runner 自带
+      - if: matrix.skill == 'md-export'
         uses: pandoc/actions/setup@v1.1.1
-      - if: matrix.skill == 'md-to-pdf'
+      - if: matrix.skill == 'md-export'
         run: sudo apt-get update -q && sudo apt-get install -yq fonts-noto-cjk
       - name: Regression
         run: uv run --no-project --python 3.12 --with ${{ matrix.with }} python -m unittest discover -s tests -v

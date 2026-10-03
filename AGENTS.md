@@ -6,10 +6,10 @@
 
 | 任务 | 入口 |
 | --- | --- |
-| README 与项目文档 | [doc-sync](skills/doc-sync/SKILL.md) |
+| README 与项目文档 | [project-docs](skills/project-docs/SKILL.md) |
 | 中英翻译 | [translate](skills/translate/SKILL.md) |
 | 删除防御性措辞 | [trim-hedging](skills/trim-hedging/SKILL.md) |
-| Markdown 转 PDF | [md-to-pdf](skills/md-to-pdf/SKILL.md) |
+| Markdown 转 PDF | [md-export](skills/md-export/SKILL.md) |
 | 安装、导航与 CI | 根 README、[SETUP.md](SETUP.md)、贡献指南和 `.github/workflows/` |
 
 每个 Skill 保持完整安装单元，不依赖另一个 Skill 或总仓库根目录运行。入口为 `SKILL.md`，Codex 的显示信息放在 `agents/openai.yaml`。
@@ -24,11 +24,11 @@
 
 | Skill | 命令 |
 | --- | --- |
-| doc-sync | `PYTHONDONTWRITEBYTECODE=1 uv run --no-project --with markdown-it-py python -m unittest discover -s tests -v` |
-| md-to-pdf | `PYTHONDONTWRITEBYTECODE=1 uv run --no-project --with pymupdf python -m unittest discover -s tests -v` |
+| project-docs | `PYTHONDONTWRITEBYTECODE=1 uv run --no-project --with markdown-it-py python -m unittest discover -s tests -v` |
+| md-export | `PYTHONDONTWRITEBYTECODE=1 uv run --no-project --with pymupdf python -m unittest discover -s tests -v` |
 
 - translate、trim-hedging 只有规范文本，改动检查内容与差异；写作类规范的重要修改可用盲写对照验证：执行者只读规范从零写，再与认可稿逐处比较。
-- 修改 Skill 规范后，用 `quick_validate.py` 等校验工具检查 frontmatter；README 改动用 doc-sync 的 `check_readme.py` 检查链接。
+- 修改 Skill 规范后，用 `quick_validate.py` 等校验工具检查 frontmatter；README 改动用 project-docs 的 `check_readme.py` 检查链接。
 
 ## 数据与发布
 

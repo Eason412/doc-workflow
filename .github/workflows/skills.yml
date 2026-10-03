@@ -37,5 +37,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v10.2.0
+      # md-to-pdf 的真实转换测试需要 Pandoc；Chrome 由 runner 自带
+      - if: matrix.skill == 'md-to-pdf'
+        uses: pandoc/actions/setup@v1.1.1
       - name: Regression
         run: uv run --no-project --python 3.12 --with ${{ matrix.with }} python -m unittest discover -s tests -v

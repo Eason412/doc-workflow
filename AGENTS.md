@@ -1,6 +1,6 @@
 # Doc Workflow 项目规则
 
-本仓库维护四个相互独立的写作与文档类 Agent Skill：README 与项目文档同步、中英互译、删除防御性措辞和 Markdown 转 PDF。运行行为以各 Skill 的源码与测试为准，任务按对应 `SKILL.md` 执行。
+本仓库维护四个相互独立的写作与文档类 Agent Skill：README 与项目文档同步、中英互译、删除防御性措辞和 Markdown 导出 Word／PDF。运行行为以各 Skill 的源码与测试为准，任务按对应 `SKILL.md` 执行。
 
 ## 工作范围
 
@@ -9,7 +9,7 @@
 | README 与项目文档 | [project-docs](skills/project-docs/SKILL.md) |
 | 中英翻译 | [translate](skills/translate/SKILL.md) |
 | 删除防御性措辞 | [trim-hedging](skills/trim-hedging/SKILL.md) |
-| Markdown 转 PDF | [md-export](skills/md-export/SKILL.md) |
+| Markdown 导出 Word／PDF | [md-export](skills/md-export/SKILL.md) |
 | 安装、导航与 CI | 根 README、[SETUP.md](SETUP.md)、贡献指南和 `.github/workflows/` |
 
 每个 Skill 保持完整安装单元，不依赖另一个 Skill 或总仓库根目录运行。入口为 `SKILL.md`，Codex 的显示信息放在 `agents/openai.yaml`。
@@ -25,8 +25,9 @@
 | Skill | 命令 |
 | --- | --- |
 | project-docs | `PYTHONDONTWRITEBYTECODE=1 uv run --no-project --with markdown-it-py python -m unittest discover -s tests -v` |
-| md-export | `PYTHONDONTWRITEBYTECODE=1 uv run --no-project --with pymupdf python -m unittest discover -s tests -v` |
+| md-export | `PYTHONDONTWRITEBYTECODE=1 MD_EXPORT_REQUIRE_TOOLS=1 uv run --no-project --with python-docx --with pdfplumber python -m unittest discover -s tests -v` |
 
+- md-export 的真实转换测试需要 Pandoc 3.9+ 和 LibreOffice；`MD_EXPORT_REQUIRE_TOOLS=1` 让缺工具时直接失败，不跳过。
 - translate、trim-hedging 只有规范文本，改动检查内容与差异；写作类规范的重要修改可用盲写对照验证：执行者只读规范从零写，再与认可稿逐处比较。
 - 修改 Skill 规范后，用 `quick_validate.py` 等校验工具检查 frontmatter；README 改动用 project-docs 的 `check_readme.py` 检查链接。
 

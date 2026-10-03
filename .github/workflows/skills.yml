@@ -28,19 +28,21 @@ jobs:
       matrix:
         include:
           - skill: project-docs
-            with: markdown-it-py
+            with: --with markdown-it-py
           - skill: md-export
-            with: pymupdf
+            with: --with python-docx --with pdfplumber
     defaults:
       run:
         working-directory: skills/${{ matrix.skill }}
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v10.2.0
-      # md-export 的真实转换测试需要 Pandoc 和中文字体；Chrome 由 runner 自带
+      # md-export 的真实转换测试需要 Pandoc 3.9+、LibreOffice 和中文字体；缺工具时测试直接失败，不跳过
       - if: matrix.skill == 'md-export'
         uses: pandoc/actions/setup@v1.1.1
       - if: matrix.skill == 'md-export'
-        run: sudo apt-get update -q && sudo apt-get install -yq fonts-noto-cjk
+        run: sudo apt-get update -q && sudo apt-get install -yq --no-install-recommends libreoffice-writer fonts-noto-cjk
       - name: Regression
-        run: uv run --no-project --python 3.12 --with ${{ matrix.with }} python -m unittest discover -s tests -v
+        env:
+          MD_EXPORT_REQUIRE_TOOLS: ${{ matrix.skill == 'md-export' && '1' || '' }}
+        run: uv run --no-project --python 3.12 ${{ matrix.with }} python -m unittest discover -s tests -v

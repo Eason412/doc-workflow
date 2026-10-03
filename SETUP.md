@@ -37,9 +37,10 @@ Only prepare tools for the functions that will be used. The agent records what i
 | POSIX linking | POSIX `sh`, `mkdir`, `date`, `basename`, `dirname`, `readlink`, `rm`, `mv`, `ln` | [Linking script](scripts/link-skills.sh) |
 | Writing, translation, wording edits | An agent able to read the Skill and input files | Skill entry points (Chinese): [project-docs](skills/project-docs/SKILL.md), [translate](skills/translate/SKILL.md), [trim-hedging](skills/trim-hedging/SKILL.md) |
 | README link checks | uv, Python ≥ 3.10, `markdown-it-py>=3` | [Checker inline metadata](skills/project-docs/scripts/check_readme.py) |
-| Markdown-to-PDF conversion | uv, Python ≥ 3.10, `pymupdf>=1.24`, Pandoc, Chrome / Chromium / Edge | [Converter](skills/md-export/scripts/md_to_pdf.py) |
-| Chinese and English PDF text | Installed fonts covering the document's characters | [Print styles](skills/md-export/assets/print.css) |
-| Optional font diagnosis | `pdffonts` | [Troubleshooting](skills/md-export/references/qa.md) (Chinese) |
+| Markdown-to-Word export | uv, Python ≥ 3.10, `python-docx`, `pdfplumber`, Pandoc 3.9+ | [Exporter](skills/md-export/scripts/md_export.py) |
+| Word-to-PDF conversion | LibreOffice (`soffice`) | [Troubleshooting](skills/md-export/references/qa.md) (Chinese) |
+| Chinese and English text | Fonts named by the chosen preset, or reported fallbacks | [Presets](skills/md-export/references/presets.md) (Chinese) |
+| Optional page rendering | Poppler `pdftoppm` | [md-export](skills/md-export/SKILL.md) (Chinese) |
 
 PDF inputs for translation require the host's PDF reading capability; the translation Skill specifies no separate PDF extraction package or translation service. Git is additionally required when the checker uses `--require-tracked`.
 
@@ -50,13 +51,14 @@ command -v sh
 command -v git
 command -v uv
 command -v pandoc
+command -v soffice
 ```
 
-On Windows, the equivalents are `Get-Command git`, `Get-Command uv`, and `Get-Command pandoc`. A missing optional tool is recorded against the corresponding function rather than treated as a failure of text-only Skills.
+On Windows, the equivalents are `Get-Command git`, `Get-Command uv`, `Get-Command pandoc`, and `Get-Command soffice`. A missing optional tool is recorded against the corresponding function rather than treated as a failure of text-only Skills.
 
-uv supplies the Python environment and resolves the scripts' inline dependencies; no global Python package installation is needed. Pandoc must support the converter's `--embed-resources` option. The browser must support its headless printing arguments; neither tool has a pinned minimum version in this repository. Browser detection covers common macOS and Windows locations and Linux executable names; an explicit executable can be passed with `--chrome`.
+uv supplies the Python environment and resolves the scripts' inline dependencies; no global Python package installation is needed. Word export needs Pandoc 3.9 or later. LibreOffice is needed only for PDF output; the exporter uses `--soffice PATH`, then the `MD_EXPORT_SOFFICE` environment variable, then `soffice` on PATH. On macOS, headless LibreOffice uses its own fontconfig and can miss system fonts, which drops Chinese text from the PDF; when `FONTCONFIG_FILE` is unset and Homebrew's `fonts.conf` exists, the exporter points `FONTCONFIG_FILE` at it for the LibreOffice process.
 
-The font stack includes Times New Roman, Songti SC, PingFang SC, Noto Serif CJK SC, and Microsoft YaHei, with separate monospace fallbacks. These are alternatives, not a requirement to install every listed font. TeX is not required. Success means the chosen functions have their actual dependencies available or have clearly recorded missing prerequisites.
+Each preset names its fonts in [presets.md](skills/md-export/references/presets.md) (Chinese); a missing font falls back to an installed one and the report lists the substitution, while `--strict-fonts` turns any substitution into a failure. TeX is not required. Success means the chosen functions have their actual dependencies available or have clearly recorded missing prerequisites.
 
 ## 🔍 3. POSIX installation preview
 
@@ -236,23 +238,22 @@ For hosts other than the two targeted by the installer, use the host's documente
 
 ## 🧪 7. Optional function checks
 
-The link checker can validate this checkout without changing documents:
+The README checker can validate this checkout without changing documents:
 
 ```sh
-uv run --no-project skills/project-docs/scripts/check_readme.py --repo . --json
-uv run --no-project skills/project-docs/scripts/check_readme.py --repo . --file README.en.md --json
+uv run --no-project skills/project-docs/scripts/check_readme.py --repo . --pair README.md README.en.md --json
 uv run --no-project skills/project-docs/scripts/check_readme.py --repo . --file SETUP.md --json
 ```
 
-Success means each JSON report contains `"ok": true` and no issues. Add `--require-tracked` only when linked documents are expected to be in the Git index; an initial checkout without commits can omit it. The checker does not validate external links, heading anchors, command execution, business behavior, or writing quality. An uncached uv environment may require downloads, so a network-restricted run should use existing caches and offline mode.
+Success means each JSON report contains `"ok": true` and no issues. Add `--require-tracked` only when linked documents are expected to be in the Git index; an initial checkout without commits can omit it. The pair check also compares the bilingual structure of the two READMEs. The checker validates local links and heading anchors, not external links, command execution, business behavior, or writing quality. An uncached uv environment may require downloads, so a network-restricted run should use existing caches and offline mode.
 
-For PDF functionality, after approval of a conversion using a disposable input and output:
+For Word and PDF export, after approval of a conversion using a disposable input and output:
 
 ```sh
-uv run --no-project skills/md-export/scripts/md_to_pdf.py input.md --output output.pdf --paper-size A4 --orientation portrait
+uv run --no-project skills/md-export/scripts/md_export.py input.md --to both --output output.docx
 ```
 
-Replace `input.md` and `output.pdf` with agreed test paths; an existing output is replaced on successful conversion. A useful test input includes Chinese and English text, a relative image, a formula, a wide table, and a long code line. The JSON must report a readable PDF with nonzero pages and the requested dimensions. Inspect rendered images of the first page and pages containing images, formulas, and wide tables. Warnings and uninspected content remain explicit in the handover; static JSON validation alone does not establish visual fidelity. Full options and inspection requirements are in [md-export](skills/md-export/SKILL.md) (Chinese).
+Replace `input.md` and `output.docx` with agreed test paths; `--to both` writes `output.docx` and `output.pdf`, and an existing output is replaced only after every check passes. A useful test input includes Chinese and English text, headings, a table, a relative image, a formula, and a code block. The JSON must report `pass` for `conversion`, `docx_check`, and `pdf_check`. Inspect rendered images of the first page and pages containing tables, images, formulas, and code; the report always sets `visual` to `not_done`, and static checks alone do not establish visual fidelity. Presets, overrides, and inspection requirements are in [md-export](skills/md-export/SKILL.md) (Chinese).
 
 Text-only Skills need no package smoke test. Their success criterion is accessible instructions and a task outcome checked against the corresponding rules.
 

@@ -1,0 +1,40 @@
+name: Skills
+
+on:
+  push:
+    paths:
+      - "skills/doc-sync/**"
+      - "skills/md-to-pdf/**"
+      - ".github/workflows/skills.yml"
+  pull_request:
+    paths:
+      - "skills/doc-sync/**"
+      - "skills/md-to-pdf/**"
+      - ".github/workflows/skills.yml"
+
+permissions:
+  contents: read
+
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  regression:
+    name: ${{ matrix.skill }} regression
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - skill: doc-sync
+            with: markdown-it-py
+          - skill: md-to-pdf
+            with: pymupdf
+    defaults:
+      run:
+        working-directory: skills/${{ matrix.skill }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v10
+      - name: Regression
+        run: uv run --no-project --python 3.12 --with ${{ matrix.with }} python -m unittest discover -s tests -v

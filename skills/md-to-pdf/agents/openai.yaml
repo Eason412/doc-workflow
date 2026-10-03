@@ -1,0 +1,4 @@
+interface:
+  display_name: "Markdown 转 PDF"
+  short_description: "把一般 Markdown 文档转成可打印的 PDF"
+  default_prompt: "Use $md-to-pdf to convert this Markdown file into a clean A4 PDF."

@@ -1,0 +1,5 @@
+interface:
+  display_name: "删减防御性措辞"
+  short_description: "删掉决策文字里的防御性免责声明，只留影响决策的限制"
+  brand_color: "#D92D20"
+  default_prompt: "Use $trim-hedging to rewrite this proposal without defensive padding."

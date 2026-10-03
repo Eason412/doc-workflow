@@ -1,0 +1,6 @@
+interface:
+  display_name: "中英翻译规范"
+  short_description: "英译中、中译英共用的翻译规则与术语表"
+  default_prompt: "使用 $translate 翻译这份文档。"
+policy:
+  allow_implicit_invocation: true

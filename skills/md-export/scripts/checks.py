@@ -18,7 +18,10 @@ PARA_FIELDS=('alignment','line_spacing','space_before','space_after','first_line
 def truth(n): return n is not None and n.get(qn('w:val'),'1') not in ('0','false','off')
 
 
-def norm(text): return re.sub(r'\s+','',text or '')
+# 空白、零宽字符和软连字符不画出来；不同平台的 LibreOffice 在 PDF 里是否保留它们不一定，比较文字时都去掉
+INVISIBLE=re.compile('[\\s\u00ad\u200b-\u200f\u2060-\u2064\ufeff]')
+def norm(text): return INVISIBLE.sub('',text or '')
+def visible(letter): return not INVISIBLE.match(letter)
 
 
 def is_cjk(char): return bool(re.match(r'[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\U00020000-\U0003134f]',char))
@@ -417,7 +420,7 @@ def check_pdf(path,preset,docx_result,decisions,strict=False):
         checks.append(row(f'PDF/页码{page_idx+1}',dict(text=want,style=page_style),pdf=dict(text=text,fonts=sorted({c['fontname'] for c in glyphs}),sizes=sorted({round(c['size'],2) for c in glyphs})),state='fail' if errors else 'pass',details=errors))
     footnote_chars=[]; removed_ids=set(); ambiguous_notes=set(); ambiguous_glyphs=set(); anchors={}
     raw=''.join(norm(c['text']) for c in bodychars)
-    rawchars=[c for c in bodychars for letter in c['text'] if not letter.isspace()]
+    rawchars=[c for c in bodychars for letter in c['text'] if visible(letter)]
     for para in docx_result['paragraphs']:
         if para['part'] not in ('word/footnotes.xml','word/endnotes.xml'): continue
         target=norm(para['text']); start=0; candidates=[]
@@ -450,8 +453,8 @@ def check_pdf(path,preset,docx_result,decisions,strict=False):
         if para.get('note_id'): anchors[para['note_id']]=max(span,key=lambda c:c['bottom'])
     bodychars=[c for c in bodychars if id(c) not in removed_ids]
     # Remove only repetitions of declared headers located at the top of a page.
-    chars=[c for c in bodychars for letter in c['text'] if not letter.isspace()]
-    stream=''.join(letter for c in bodychars for letter in c['text'] if not letter.isspace())
+    chars=[c for c in bodychars for letter in c['text'] if visible(letter)]
+    stream=''.join(letter for c in bodychars for letter in c['text'] if visible(letter))
     repeated=set()
     for header in set(docx_result.get('repeated_table_headers',[])):
         target=norm(header); pos=0; first=True
@@ -465,8 +468,8 @@ def check_pdf(path,preset,docx_result,decisions,strict=False):
     kept=[(i,c) for i,c in enumerate(chars) if i not in repeated]
     stream=''.join(stream[i] for i,c in kept)
     chars=[dict(c,text=stream[k],_ambiguous=id(c) in ambiguous_glyphs) for k,(i,c) in enumerate(kept)]
-    notes_chars=[c for c in footnote_chars for letter in c['text'] if not letter.isspace()]
-    notes_stream=''.join(letter for c in footnote_chars for letter in c['text'] if not letter.isspace())
+    notes_chars=[c for c in footnote_chars for letter in c['text'] if visible(letter)]
+    notes_stream=''.join(letter for c in footnote_chars for letter in c['text'] if visible(letter))
     claimed=set(); notes_claimed=set()
     cjk_allowed={font for s in preset['styles'].values() for font in allowed_fonts(s['eastAsia'],decisions)}
     bad=[dict(text=c['text'],font=c['fontname']) for c in allchars if any(is_cjk(x) for x in c['text']) and not any(font_matches(c['fontname'],f) for f in cjk_allowed)]

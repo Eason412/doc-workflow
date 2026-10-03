@@ -9,6 +9,7 @@ import shutil
 import struct
 import subprocess
 import sys
+import unicodedata
 import tempfile
 import time
 import unittest
@@ -103,6 +104,11 @@ class PresetTests(unittest.TestCase):
         p,ds=presets.resolve_fonts(presets.load_preset('gongwen'),{'Noto Serif CJK SC','Noto Sans CJK SC','DejaVu Serif','DejaVu Sans Mono'})
         self.assertTrue(all(d['status'] in ('fallback','pass') for d in ds))
         self.assertEqual(p['styles']['Body Text']['eastAsia'],'Noto Serif CJK SC')
+
+    def test_invisible_characters_ignored_in_text_match(self):
+        # Linux 版 LibreOffice 会丢掉 Pandoc 写进表格的零宽空格
+        self.assertEqual(checks.norm('a\u200b b\u00ad\ufeffc'),'abc')
+        self.assertFalse(checks.visible('\u200b')); self.assertTrue(checks.visible('中'))
 
     def test_fontconfig_wrapper(self):
         with tempfile.TemporaryDirectory() as t:
@@ -567,7 +573,8 @@ $$\\frac{x^2}{y}=z$$
         self.assertEqual(proc.returncode,0,proc.stdout)
         report=json.loads(proc.stdout)
         p,_=presets.resolve_fonts(presets.load_preset(),{d['actual'] for d in report['font_decisions']})
-        self.assertEqual(p['styles']['Page Number']['ascii'],'Times New Roman')
+        # 要求字体本身已回退到 Liberation Serif 时，造不出「改用回退字体」的场景
+        if p['styles']['Page Number']['ascii']!='Times New Roman': self.skipTest('本机没有 Times New Roman')
         dx=checks.check_docx(md.with_suffix('.docx'),p)
         tampered=md.parent/'tampered.docx'; shutil.copy2(md.with_suffix('.docx'),tampered)
         def change(parts):
@@ -670,8 +677,11 @@ $$\\frac{x^2}{y}=z$$
         import pdfplumber
         with pdfplumber.open(md.with_suffix('.pdf')) as pdf:
             chars=pdf.pages[0].chars
-            numerator=next(c for c in chars if c['text']=='X'); denominator=next(c for c in chars if c['text']=='Y')
             stream=''.join(c['text'] for c in chars)
+            # 公式字母在有的平台是数学斜体码位（如 U+1D44B），按 NFKC 归一后再找
+            letter=lambda want: [c for c in chars if unicodedata.normalize('NFKC',c['text'])==want]
+            self.assertTrue(letter('X') and letter('Y'),f'PDF 中找不到分式字母：{stream!r}')
+            numerator=letter('X')[0]; denominator=letter('Y')[0]
             previous=chars[stream.index('PREV'):stream.index('PREV')+4]
             following=chars[stream.index('NEXT'):stream.index('NEXT')+4]
             self.assertGreaterEqual(numerator['top'],max(c['bottom'] for c in previous)-0.5)

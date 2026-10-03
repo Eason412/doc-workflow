@@ -681,7 +681,8 @@ $$\\frac{x^2}{y}=z$$
             # 公式字母在有的平台是数学斜体码位（如 U+1D44B），按 NFKC 归一后再找
             letter=lambda want: [c for c in chars if unicodedata.normalize('NFKC',c['text'])==want]
             # Linux 版 LibreOffice 把公式画成图形，PDF 里没有公式字符，只能核对上面的 DOCX 行距
-            if not (letter('X') or letter('Y')): self.skipTest(f'PDF 里的公式不是文字，无法按字符位置测裁切：{stream!r}')
+            # 对照行 NEXT 里也有 X，只用公式独有的 Y 判断公式是不是文字
+            if not letter('Y'): self.skipTest(f'PDF 里的公式不是文字，无法按字符位置测裁切：{stream!r}')
             self.assertTrue(letter('X') and letter('Y'),f'PDF 中找不到分式字母：{stream!r}')
             numerator=letter('X')[0]; denominator=letter('Y')[0]
             previous=chars[stream.index('PREV'):stream.index('PREV')+4]

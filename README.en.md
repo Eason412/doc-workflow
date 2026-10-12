@@ -10,7 +10,7 @@ Current version: [V0.1.0](https://github.com/Eason412/doc-workflow/releases/tag/
 
 ## ✨ Features
 
-- 🔎 **Documentation grounded in code**: Documentation follows source code, configuration, and tests. project-docs writes or updates Chinese and English READMEs with matching sections by default, and includes a checker for local links, anchors, and bilingual structure.
+- 🔎 **Documentation grounded in code**: Documentation follows source code, configuration, and tests. project-docs writes or updates Chinese and English READMEs with matching sections for public projects and a plain Chinese README for internal ones, and includes a checker for local links, anchors, and bilingual structure.
 - 🌐 **Consistent bilingual structure and terminology**: Translation preserves headings, tables, formulas, and code structure, uses a shared glossary, and checks negation, numbers, conditions, and modality.
 - ✂️ **Concise decision documents**: Disclaimers that merely demonstrate diligence and stacked hedges are removed, while decision-relevant limits and the original strength of evidence are preserved.
 - 🖨️ **Word and PDF export by preset**: One Markdown file becomes an editable Word document in the general, academic, or official-document (公文) preset, and the PDF comes from that same Word file. Fonts, sizes, line spacing, and numbering are checked item by item, and output is replaced only after the checks pass.

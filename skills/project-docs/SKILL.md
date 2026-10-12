@@ -24,7 +24,7 @@ description: "在你明确要求时，依据源码、配置与测试撰写、审
 
 ## README
 
-写或改 README 时读 [README 写法](references/readme.md)，同时写中文 `README.md` 与英文 `README.en.md`（例外见该文）。改完用脚本检查本地链接、Markdown 锚点、Git 可交付性和双语结构对齐（只读、零网络、单依赖 `markdown-it-py`，不检查业务正确性）：
+写或改 README 时读 [README 写法](references/readme.md)，公开项目同时写中文 `README.md` 与英文 `README.en.md`，内部项目只写中文并省去标语、提示块和 emoji（例外见该文）。改完用脚本检查本地链接、Markdown 锚点、Git 可交付性和双语结构对齐（只读、零网络、单依赖 `markdown-it-py`，不检查业务正确性）：
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 uv run "$SKILL_DIR/scripts/check_readme.py" --repo <仓库路径> --pair README.md README.en.md --require-tracked --json

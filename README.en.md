@@ -2,18 +2,17 @@
 
 [中文](README.md) | English
 
-**Keep project documentation, bilingual text, and non-paper deliverables accurate and clear.** This repository contains four writing and documentation Skills for documentation updates, Chinese–English translation, non-paper Chinese writing and concise wording, and Markdown export to Word or PDF. Each Skill is a standalone set of agent task instructions with `SKILL.md` as its entry point.
+**Keep project documentation, bilingual text, and non-paper deliverables accurate and clear.** This repository contains three writing and documentation Skills for documentation updates, Chinese–English translation, and non-paper Chinese writing and concise wording. Each Skill is a standalone set of agent task instructions with `SKILL.md` as its entry point.
 
-Current version: [V0.1.0](https://github.com/Eason412/doc-workflow/releases/tag/V0.1.0) ([all versions and release notes](https://github.com/Eason412/doc-workflow/releases)).
+Latest published release: [V0.1.0](https://github.com/Eason412/doc-workflow/releases/tag/V0.1.0) ([all versions and release notes](https://github.com/Eason412/doc-workflow/releases)); the `main` branch includes subsequent additions and removals. The former document-export Skill `md-export` has been archived; its complete contents remain in [release V0.1.0](https://github.com/Eason412/doc-workflow/tree/V0.1.0/skills/md-export).
 
-> ⚠️ Prerequisites: the agent must be able to read `SKILL.md` and its referenced files. Word export requires Pandoc 3.9+; PDF export also requires LibreOffice and fonts for Chinese and English text.
+> ⚠️ Prerequisites: the agent must be able to read `SKILL.md` and its referenced files; running the README checker also requires uv and Python 3.10+.
 
 ## ✨ Features
 
 - 🔎 **Documentation grounded in code**: Documentation follows source code, configuration, and tests. project-docs writes or updates Chinese and English READMEs with matching sections for public projects and a plain Chinese README for internal ones, and includes a checker for local links, anchors, and bilingual structure.
 - 🌐 **Consistent bilingual structure and domain glossaries**: Translation preserves headings, tables, formulas, and code structure, uses per-domain glossaries while prioritizing per-project terminology, and checks negation, numbers, conditions, and modality.
 - ✂️ **Clear non-paper Chinese writing and concise decision prose**: Cover Chinese technical proposals, reports, thesis proposals, blogs, and post-translation polishing, while removing defensive disclaimers and stacked hedges in Chinese or English drafts without altering decision-relevant limits or evidence strength.
-- 🖨️ **Word and PDF export by preset**: One Markdown file becomes an editable Word document in the general, academic, or official-document (公文) preset, and the PDF comes from that same Word file. Fonts, sizes, line spacing, and numbering are checked item by item, and output is replaced only after the checks pass.
 
 ## 🧩 Skills
 
@@ -22,7 +21,6 @@ Current version: [V0.1.0](https://github.com/Eason412/doc-workflow/releases/tag/
 | [project-docs](skills/project-docs/SKILL.md) (Chinese) | Writing, reviewing, and updating READMEs, project documentation, and handover notes | [README guidelines](skills/project-docs/references/readme.md) (Chinese), [checker](skills/project-docs/scripts/check_readme.py) |
 | [translate](skills/translate/SKILL.md) (Chinese) | Chinese–English translation of papers, technical documents, and notes | [Domain-adaptation glossary](skills/translate/references/domain-adaptation.md) (Chinese–English) |
 | [writing-zh](skills/writing-zh/SKILL.md) (Chinese) | Chinese proposals, reports, thesis proposals, blogs, post-translation polishing, and Chinese/English defensive-wording edits or reviews | [Boundary examples](skills/writing-zh/references/examples.md) (Chinese) |
-| [md-export](skills/md-export/SKILL.md) (Chinese) | Exporting Markdown documents to Word or PDF by layout preset | [Presets](skills/md-export/references/presets.md) (Chinese), [troubleshooting](skills/md-export/references/qa.md) (Chinese) |
 
 Each Skill is a complete installation unit and runs without another Skill or the repository root. Paper writing and academic Skills are maintained in the sister repository [paper-workflow](https://github.com/Eason412/paper-workflow), while other writing Skills belong in this repository.
 
@@ -37,11 +35,9 @@ project-docs requires explicit invocation: use `/project-docs` in Claude Code or
 | --- | --- | --- |
 | Documentation writing, translation, and non-paper editing | An agent; the text instructions require no extra packages | Each Skill's `SKILL.md` |
 | README link and bilingual checks | uv, Python ≥ 3.10, `markdown-it-py>=3` | [Checker](skills/project-docs/scripts/check_readme.py) |
-| Word export | uv, Python ≥ 3.10, `python-docx`, `pdfplumber`, Pandoc 3.9+ | [Exporter](skills/md-export/scripts/md_export.py) |
-| PDF export | The Word export dependencies, plus LibreOffice and Chinese and English fonts | [Troubleshooting](skills/md-export/references/qa.md) (Chinese) |
 
 - **Python dependencies**: Scripts run through uv using inline dependency declarations, with no packages to install in advance.
-- **Optional tools**: Git tracking checks require Git; Poppler's `pdftoppm` renders PDF pages to images for visual review.
+- **Optional tools**: Git tracking checks require Git.
 - **Preparation and validation**: The steps are in [SETUP.md](SETUP.md).
 
 ## 🚀 Setup
@@ -49,11 +45,6 @@ project-docs requires explicit invocation: use `/project-docs` in Claude Code or
 - **Setup**: An agent reads [SETUP.md](SETUP.md) and completes the setup; the user selects the repository location.
 - **Afterward**: A new agent session confirms Skill discovery and entry-point access; any reload follows the host's own mechanism.
 - **User actions**: None; setup requires no additional account login.
-
-| Setting | Location | Description |
-| --- | --- | --- |
-| LibreOffice path | Environment variable `MD_EXPORT_SOFFICE` | Set when `soffice` is not on PATH |
-| Custom layout preset | `--preset <file>.json` | Override keys are in [Presets](skills/md-export/references/presets.md) (Chinese) |
 
 ## 📁 Maintenance and Documentation
 

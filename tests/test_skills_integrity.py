@@ -6,7 +6,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = ROOT / "skills"
-EXPECTED_SKILLS = {"project-docs", "translate", "writing-zh", "md-export"}
+EXPECTED_SKILLS = {"project-docs", "translate", "writing-zh"}
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
 INLINE_CODE = re.compile(r"`[^`\n]+`")
 MD_LINK = re.compile(r"\[[^\]]+\]\(([^)#]+)(?:#[^)]*)?\)")

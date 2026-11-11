@@ -2,7 +2,7 @@
 
 This manual covers local installation from a stable checkout of Doc Workflow. Each directory under `skills/` is a complete Skill with its own `SKILL.md`, references, and any supporting scripts. The POSIX installer discovers all Skill directories and links them into both Codex and Claude Code; it has no per-Skill selection parameter, so a single Skill or a single host uses the manual path at the end of step 3. Other hosts that support `SKILL.md` can load a complete Skill directory using their own installation mechanism.
 
-The agent must inspect the environment before changes, present the dry-run result, and obtain user approval before applying links. Existing authorization covers only the operations it explicitly includes. Dependency installation, configuration changes, and host restarts also require approval before execution unless already authorized. No account login, paid API call, or project-document conversion is part of installation.
+The agent must inspect the environment before changes, present the dry-run result, and obtain user approval before applying links. Existing authorization covers only the operations it explicitly includes. Dependency installation, configuration changes, and host restarts also require approval before execution unless already authorized. No account login or paid API call is part of installation.
 
 ## 📍 1. Repository location
 
@@ -26,7 +26,7 @@ Set-Location (Join-Path $HOME 'Projects/opensource/doc-workflow')
 
 Native Windows then skips the POSIX steps 3–4 and uses step 5. If cloning fails, report the result and use an available local copy; do not assume the remote exists. Reading a locally supplied Skill directory does not need Git.
 
-Read [AGENTS.md](AGENTS.md) (Chinese), [scripts/link-skills.sh](scripts/link-skills.sh), and the relevant Skill entry points before installation. The success criterion is a stable checkout containing the four `skills/<name>/SKILL.md` files and the linking script. Commands below run from that checkout; substitute the selected path if different.
+Read [AGENTS.md](AGENTS.md) (Chinese), [scripts/link-skills.sh](scripts/link-skills.sh), and the relevant Skill entry points before installation. The success criterion is a stable checkout containing the three `skills/<name>/SKILL.md` files and the linking script. Commands below run from that checkout; substitute the selected path if different.
 
 ## 🧰 2. Dependency inventory
 
@@ -37,10 +37,6 @@ Only prepare tools for the functions that will be used. The agent records what i
 | POSIX linking | POSIX `sh`, `mkdir`, `date`, `basename`, `dirname`, `readlink`, `rm`, `mv`, `ln` | [Linking script](scripts/link-skills.sh) |
 | Writing, translation, wording edits | An agent able to read the Skill and input files | Skill entry points (Chinese): [project-docs](skills/project-docs/SKILL.md), [translate](skills/translate/SKILL.md), [writing-zh](skills/writing-zh/SKILL.md) |
 | README link checks | uv, Python ≥ 3.10, `markdown-it-py>=3` | [Checker inline metadata](skills/project-docs/scripts/check_readme.py) |
-| Markdown-to-Word export | uv, Python ≥ 3.10, `python-docx`, `pdfplumber`, Pandoc 3.9+ | [Exporter](skills/md-export/scripts/md_export.py) |
-| Word-to-PDF conversion | LibreOffice (`soffice`) | [Troubleshooting](skills/md-export/references/qa.md) (Chinese) |
-| Chinese and English text | Fonts named by the chosen preset, or reported fallbacks | [Presets](skills/md-export/references/presets.md) (Chinese) |
-| Optional page rendering | Poppler `pdftoppm` | [md-export](skills/md-export/SKILL.md) (Chinese) |
 
 PDF inputs for translation require the host's PDF reading capability; the translation Skill specifies no separate PDF extraction package or translation service. Git is additionally required when the checker uses `--require-tracked`.
 
@@ -50,15 +46,11 @@ For a POSIX environment, the following commands inspect available executables wi
 command -v sh
 command -v git
 command -v uv
-command -v pandoc
-command -v soffice
 ```
 
-On Windows, the equivalents are `Get-Command git`, `Get-Command uv`, `Get-Command pandoc`, and `Get-Command soffice`. A missing optional tool is recorded against the corresponding function rather than treated as a failure of text-only Skills.
+On Windows, the equivalents are `Get-Command git` and `Get-Command uv`. A missing optional tool is recorded against the corresponding function rather than treated as a failure of text-only Skills.
 
-uv supplies the Python environment and resolves the scripts' inline dependencies; no global Python package installation is needed. Word export needs Pandoc 3.9 or later. LibreOffice is needed only for PDF output; the exporter uses `--soffice PATH`, then the `MD_EXPORT_SOFFICE` environment variable, then `soffice` on PATH. On macOS, headless LibreOffice uses its own fontconfig and can miss system fonts, which drops Chinese text from the PDF; when `FONTCONFIG_FILE` is unset and Homebrew's `fonts.conf` exists, the exporter points `FONTCONFIG_FILE` at it for the LibreOffice process.
-
-Each preset names its fonts in [presets.md](skills/md-export/references/presets.md) (Chinese); a missing font falls back to an installed one and the report lists the substitution, while `--strict-fonts` turns any substitution into a failure. TeX is not required. Success means the chosen functions have their actual dependencies available or have clearly recorded missing prerequisites.
+uv supplies the Python environment and resolves the script's inline dependencies; no global Python package installation is needed. Success means the chosen functions have their actual dependencies available or have clearly recorded missing prerequisites.
 
 ## 🔍 3. POSIX installation preview
 
@@ -121,7 +113,7 @@ Inspect the resulting targets:
 ```sh
 (
 for target in "${CODEX_HOME:-$HOME/.codex}/skills" "$HOME/.claude/skills"; do
-  for name in project-docs translate writing-zh md-export; do
+  for name in project-docs translate writing-zh; do
     test -L "$target/$name" || exit 1
     test "$(readlink "$target/$name")" = "$(pwd -P)/skills/$name" || exit 1
     test -f "$target/$name/SKILL.md" || exit 1
@@ -133,7 +125,7 @@ scripts/link-skills.sh --dry-run
 
 The subshell keeps a failed check from closing the Agent's shell.
 
-Success means all eight entries point to the corresponding absolute repository directories, each entry exposes `SKILL.md`, and the second preview reports `ok` for every entry. Record any backup locations actually created; backups are retained for recovery.
+Success means all six entries point to the corresponding absolute repository directories, each entry exposes `SKILL.md`, and the second preview reports `ok` for every entry. Record any backup locations actually created; backups are retained for recovery.
 
 ## 🪟 5. Native Windows equivalent
 
@@ -246,14 +238,6 @@ uv run --no-project skills/project-docs/scripts/check_readme.py --repo . --file 
 ```
 
 Success means each JSON report contains `"ok": true` and no issues. Add `--require-tracked` only when linked documents are expected to be in the Git index; an initial checkout without commits can omit it. The pair check also compares the bilingual structure of the two READMEs. The checker validates local links and heading anchors, not external links, command execution, business behavior, or writing quality. An uncached uv environment may require downloads, so a network-restricted run should use existing caches and offline mode.
-
-For Word and PDF export, after approval of a conversion using a disposable input and output:
-
-```sh
-uv run --no-project skills/md-export/scripts/md_export.py input.md --to both --output output.docx
-```
-
-Replace `input.md` and `output.docx` with agreed test paths; `--to both` writes `output.docx` and `output.pdf`, and an existing output is replaced only after every check passes. A useful test input includes Chinese and English text, headings, a table, a relative image, a formula, and a code block. The JSON must report `pass` for `conversion`, `docx_check`, and `pdf_check`. Inspect rendered images of the first page and pages containing tables, images, formulas, and code; the report always sets `visual` to `not_done`, and static checks alone do not establish visual fidelity. Presets, overrides, and inspection requirements are in [md-export](skills/md-export/SKILL.md) (Chinese).
 
 Text-only Skills need no package smoke test. Their success criterion is accessible instructions and a task outcome checked against the corresponding rules.
 

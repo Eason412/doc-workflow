@@ -2,18 +2,17 @@
 
 中文 | [English](README.en.md)
 
-**让项目文档、双语文本与非论文交付稿保持准确、清晰。** 本仓库收录四个写作与文档类 Skill，覆盖文档同步、中英互译、非论文中文写作与措辞精简、Markdown 导出 Word／PDF。每个 Skill 都是以 `SKILL.md` 为入口的 Agent 任务规范，可独立安装和使用。
+**让项目文档、双语文本与非论文交付稿保持准确、清晰。** 本仓库收录三个写作与文档类 Skill，覆盖文档同步、中英互译、非论文中文写作与措辞精简。每个 Skill 都是以 `SKILL.md` 为入口的 Agent 任务规范，可独立安装和使用。
 
-当前版本：[V0.1.0](https://github.com/Eason412/doc-workflow/releases/tag/V0.1.0)（[全部版本与更新说明](https://github.com/Eason412/doc-workflow/releases)）。
+最近发布版本：[V0.1.0](https://github.com/Eason412/doc-workflow/releases/tag/V0.1.0)（[全部版本与更新说明](https://github.com/Eason412/doc-workflow/releases)）；`main` 分支在此之后已有增删更新。原文档导出技能 `md-export` 已归档，完整内容见 [V0.1.0 版本](https://github.com/Eason412/doc-workflow/tree/V0.1.0/skills/md-export)。
 
-> ⚠️ 使用前提：Agent 需要能够读取 `SKILL.md` 及其引用文件；导出 Word 需要 Pandoc 3.9+，导出 PDF 还需要 LibreOffice 和中英文字体。
+> ⚠️ 使用前提：Agent 需要能够读取 `SKILL.md` 及其引用文件；运行 README 检查脚本还需要 uv 与 Python 3.10+。
 
 ## ✨ 特点
 
 - 🔎 **代码与文档一致性**：文档内容以源码、配置和测试为依据；project-docs 为公开项目撰写或更新逐节对应的中英文 README，内部项目只写平实的中文 README，并附本地链接、锚点与双语结构检查脚本。
 - 🌐 **双语结构与按领域分表的术语一致性**：翻译保留标题、表格、公式和代码结构，按研究领域拆分中英词表并优先遵循单篇稿件自有术语表，重点核对否定、数字、条件和情态。
 - ✂️ **非论文写作与决策文字精简**：覆盖中文技术方案、汇报、开题说明、博客与译后润色，同时支持删去中英文稿件里自证勤勉的免责声明和层层保留，保留影响判断的限制与原有证据强度。
-- 🖨️ **按范式导出 Word 与 PDF**：同一份 Markdown 按通用、学术、公文三套范式生成可编辑的 Word，再由同一份 Word 转出 PDF；字体、字号、行距和编号逐项核对，检查通过才替换输出。
 
 ## 🧩 Skill 组成
 
@@ -22,9 +21,8 @@
 | [project-docs](skills/project-docs/SKILL.md) | README、项目文档与交接说明的撰写、审阅及更新 | [README 规范](skills/project-docs/references/readme.md)、[检查脚本](skills/project-docs/scripts/check_readme.py) |
 | [translate](skills/translate/SKILL.md) | 论文、技术文档与笔记的中英互译 | [域自适应术语表](skills/translate/references/domain-adaptation.md) |
 | [writing-zh](skills/writing-zh/SKILL.md) | 中文方案、汇报、开题说明、博客与译后润色，及中英文防御性措辞删减或审查 | [边界示例](skills/writing-zh/references/examples.md) |
-| [md-export](skills/md-export/SKILL.md) | Markdown 稿按排版范式导出 Word 或 PDF | [范式说明](skills/md-export/references/presets.md)、[常见问题](skills/md-export/references/qa.md) |
 
-四个 Skill 均为完整安装单元，不依赖其他 Skill 或仓库根目录运行。论文写作与学术类 Skill 在姊妹仓库 [paper-workflow](https://github.com/Eason412/paper-workflow) 维护，其他写作归本仓库。
+三个 Skill 均为完整安装单元，不依赖其他 Skill 或仓库根目录运行。论文写作与学术类 Skill 在姊妹仓库 [paper-workflow](https://github.com/Eason412/paper-workflow) 维护，其他写作归本仓库。
 
 project-docs 仅手动调用：Claude Code 使用 `/project-docs`，Codex 使用 `$project-docs`。普通文档任务和工作记录整理不会自动加载它；已有规范与检查工具仍可按需使用。
 
@@ -37,11 +35,9 @@ project-docs 仅手动调用：Claude Code 使用 `/project-docs`，Codex 使用
 | --- | --- | --- |
 | 文档写作、翻译与非论文改写 | Agent；文本规范本身无额外软件包 | 各 Skill 的 `SKILL.md` |
 | README 链接与双语检查 | uv、Python ≥ 3.10、`markdown-it-py>=3` | [检查脚本](skills/project-docs/scripts/check_readme.py) |
-| Word 导出 | uv、Python ≥ 3.10、`python-docx`、`pdfplumber`、Pandoc 3.9+ | [导出脚本](skills/md-export/scripts/md_export.py) |
-| PDF 导出 | Word 导出的依赖，加 LibreOffice 和中英文字体 | [常见问题](skills/md-export/references/qa.md) |
 
 - **Python 依赖**：脚本通过 uv 按内联依赖声明运行，无需预先安装软件包。
-- **可选工具**：Git 跟踪检查需要 Git；Poppler 的 `pdftoppm` 用于把 PDF 页面渲染成图片目测。
+- **可选工具**：Git 跟踪检查需要 Git。
 - **准备与验收**：具体步骤见 [SETUP.md（英文）](SETUP.md)。
 
 ## 🚀 设置方法
@@ -49,11 +45,6 @@ project-docs 仅手动调用：Claude Code 使用 `/project-docs`，Codex 使用
 - **设置**：由 Agent 读取 [SETUP.md（英文）](SETUP.md) 并完成设置；仓库位置由使用者选定。
 - **完成后**：开启新的 Agent 会话，确认 Skill 已被发现并能读取其入口；宿主要求重新加载时按宿主机制处理。
 - **需用户亲自完成**：无；设置过程无需新增账号登录。
-
-| 设置项 | 位置 | 说明 |
-| --- | --- | --- |
-| LibreOffice 路径 | 环境变量 `MD_EXPORT_SOFFICE` | `soffice` 不在 PATH 时指定 |
-| 自定义排版范式 | `--preset <文件>.json` | 覆盖键见 [范式说明](skills/md-export/references/presets.md) |
 
 ## 📁 维护与文档导航
 

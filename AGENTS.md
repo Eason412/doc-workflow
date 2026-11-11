@@ -1,6 +1,6 @@
 # Doc Workflow 项目规则
 
-本仓库维护四个相互独立的写作与文档类 Agent Skill：README 与项目文档同步、中英互译、非论文中文写作与措辞精简、Markdown 导出 Word／PDF。运行行为以各 Skill 的源码与测试为准，任务按对应 `SKILL.md` 执行。
+本仓库维护三个相互独立的写作与文档类 Agent Skill：README 与项目文档同步、中英互译、非论文中文写作与措辞精简。运行行为以各 Skill 的源码与测试为准，任务按对应 `SKILL.md` 执行。
 
 ## 工作范围
 
@@ -9,7 +9,6 @@
 | README 与项目文档 | [project-docs](skills/project-docs/SKILL.md) |
 | 中英翻译 | [translate](skills/translate/SKILL.md) |
 | 非论文写作与措辞精简 | [writing-zh](skills/writing-zh/SKILL.md) |
-| Markdown 导出 Word／PDF | [md-export](skills/md-export/SKILL.md) |
 | 安装、导航与 CI | 根 README、[SETUP.md](SETUP.md)、贡献指南和 `.github/workflows/` |
 
 每个 Skill 保持完整安装单元，不依赖另一个 Skill 或总仓库根目录运行。入口为 `SKILL.md`，Codex 的显示信息放在 `agents/openai.yaml`。
@@ -26,9 +25,7 @@
 | --- | --- |
 | 仓库与文本技能检查 | 在根目录运行 `PYTHONDONTWRITEBYTECODE=1 uv run --no-project python -m unittest discover -s tests -v` |
 | project-docs | `PYTHONDONTWRITEBYTECODE=1 uv run --no-project --with markdown-it-py python -m unittest discover -s tests -v` |
-| md-export | `PYTHONDONTWRITEBYTECODE=1 MD_EXPORT_REQUIRE_TOOLS=1 uv run --no-project --with python-docx --with pdfplumber python -m unittest discover -s tests -v` |
 
-- md-export 的真实转换测试需要 Pandoc 3.9+ 和 LibreOffice；`MD_EXPORT_REQUIRE_TOOLS=1` 让缺工具时直接失败，不跳过。
 - translate、writing-zh 为纯文本规范，改动检查内容、差异与内部链接；写作类规范的重要修改用新旧双盲对照验证：平时写稿的执行者分别按旧版、新版规范运行全套回归题并照常读参考文件，评判方在不知哪份为新版时比较结果。
 - 修改 Skill 规范后检查 frontmatter 与相对链接；README 与 SETUP 改动用 project-docs 的 `check_readme.py` 检查链接与双语对齐。
 

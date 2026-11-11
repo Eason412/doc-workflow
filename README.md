@@ -26,6 +26,8 @@
 
 四个 Skill 均为完整安装单元，不依赖其他 Skill 或仓库根目录运行。学术类 Skill 在姊妹仓库 [paper-workflow](https://github.com/Eason412/paper-workflow) 维护。
 
+project-docs 仅手动调用：Claude Code 使用 `/project-docs`，Codex 使用 `$project-docs`。普通文档任务和工作记录整理不会自动加载它；已有规范与检查工具仍可按需使用。
+
 ## 🛠️ 运行条件
 
 - **宿主**：Codex、Claude Code 等能够加载 `SKILL.md` 的 Agent 可使用这些规范；宿主的文件读取、脚本执行和 PDF 阅读能力决定可执行的任务范围。

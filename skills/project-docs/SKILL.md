@@ -1,6 +1,7 @@
 ---
 name: project-docs
-description: "在你明确要求时，依据源码、配置与测试撰写、审阅和更新 README、项目文档与交接说明；默认中英双语 README，附本地链接、锚点与双语结构对齐检查。普通代码收尾、整理文件或任务完成时不触发。"
+description: "仅在用户点名 project-docs 时使用：依据源码、配置与测试撰写、审阅和更新 README、项目文档与交接说明，提供本地链接、锚点与双语结构专项检查。"
+disable-model-invocation: true
 ---
 
 # 项目文档与 README
@@ -24,7 +25,9 @@ description: "在你明确要求时，依据源码、配置与测试撰写、审
 
 ## README
 
-写或改 README 时读 [README 写法](references/readme.md)，公开项目同时写中文 `README.md` 与英文 `README.en.md`，内部项目只写中文并省去标语、提示块和 emoji（例外见该文）。改完用脚本检查本地链接、Markdown 锚点、Git 可交付性和双语结构对齐（只读、零网络、单依赖 `markdown-it-py`，不检查业务正确性）：
+项目入口 README 采用 [README 写法](references/readme.md)：公开项目同时写中文 `README.md` 与英文 `README.en.md`，内部项目只写中文并省去标语、提示块和 emoji（例外见该文）。`.work/` 等工作资料索引不因名为 README 就套项目介绍、双语或分发检查；这类文件按项目任务规则维护，需要时用离线链接工具核对导航。
+
+项目入口改完用脚本检查本地链接、Markdown 锚点与双语结构（只读、零网络、单依赖 `markdown-it-py`，不检查业务正确性）。仅在要求目标随 Git 分发时加 `--require-tracked`，内部本机文档不加：
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 uv run "$SKILL_DIR/scripts/check_readme.py" --repo <仓库路径> --pair README.md README.en.md --require-tracked --json

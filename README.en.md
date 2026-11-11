@@ -26,6 +26,8 @@ Current version: [V0.1.0](https://github.com/Eason412/doc-workflow/releases/tag/
 
 Each Skill is a complete installation unit and runs without another Skill or the repository root. Academic Skills are maintained in the sister repository [paper-workflow](https://github.com/Eason412/paper-workflow).
 
+project-docs requires explicit invocation: use `/project-docs` in Claude Code or `$project-docs` in Codex. Routine documentation tasks and work-record maintenance do not load it automatically; its guidelines and checking tools remain available when needed.
+
 ## 🛠️ Requirements
 
 - **Hosts**: Agents that load `SKILL.md`, including Codex and Claude Code, can use these instructions. Available file access, script execution, and PDF reading capabilities determine the tasks a host can perform.

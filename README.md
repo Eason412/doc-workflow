@@ -12,7 +12,7 @@
 
 - 🔎 **代码与文档一致性**：文档内容以源码、配置和测试为依据；project-docs 为公开项目撰写或更新逐节对应的中英文 README，内部项目只写平实的中文 README，并附本地链接、锚点与双语结构检查脚本。
 - 🌐 **双语结构与按领域分表的术语一致性**：翻译保留标题、表格、公式和代码结构，按研究领域拆分中英词表并优先遵循单篇稿件自有术语表，重点核对否定、数字、条件和情态。
-- ✂️ **非论文写作与决策文字精简**：覆盖中文技术方案、汇报、开题说明、博客与译后润色，同时支持删去中英文稿件里自证勤勉的免责声明和层层保留，保留影响判断的限制与原有证据强度。
+- ✂️ **非论文写作与决策文字精简**：覆盖中文技术方案、汇报、博客与译后润色，同时支持删去中英文稿件里自证勤勉的免责声明和层层保留，保留影响判断的限制与原有证据强度。
 
 ## 🧩 Skill 组成
 
@@ -20,7 +20,7 @@
 | --- | --- | --- |
 | [project-docs](skills/project-docs/SKILL.md) | README、项目文档与交接说明的撰写、审阅及更新 | [README 规范](skills/project-docs/references/readme.md)、[检查脚本](skills/project-docs/scripts/check_readme.py) |
 | [translate](skills/translate/SKILL.md) | 论文、技术文档与笔记的中英互译 | [域自适应术语表](skills/translate/references/domain-adaptation.md) |
-| [writing-zh](skills/writing-zh/SKILL.md) | 中文方案、汇报、开题说明、博客与译后润色，及中英文防御性措辞删减或审查 | [边界示例](skills/writing-zh/references/examples.md) |
+| [writing-zh](skills/writing-zh/SKILL.md) | 中文方案、汇报、博客与译后润色，及中英文防御性措辞删减或审查 | [边界示例](skills/writing-zh/references/examples.md) |
 
 三个 Skill 均为完整安装单元，不依赖其他 Skill 或仓库根目录运行。论文写作与学术类 Skill 在姊妹仓库 [paper-workflow](https://github.com/Eason412/paper-workflow) 维护，其他写作归本仓库。
 

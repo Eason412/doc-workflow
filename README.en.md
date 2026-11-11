@@ -12,7 +12,7 @@ Latest published release: [V0.1.0](https://github.com/Eason412/doc-workflow/rele
 
 - 🔎 **Documentation grounded in code**: Documentation follows source code, configuration, and tests. project-docs writes or updates Chinese and English READMEs with matching sections for public projects and a plain Chinese README for internal ones, and includes a checker for local links, anchors, and bilingual structure.
 - 🌐 **Consistent bilingual structure and domain glossaries**: Translation preserves headings, tables, formulas, and code structure, uses per-domain glossaries while prioritizing per-project terminology, and checks negation, numbers, conditions, and modality.
-- ✂️ **Clear non-paper Chinese writing and concise decision prose**: Cover Chinese technical proposals, reports, thesis proposals, blogs, and post-translation polishing, while removing defensive disclaimers and stacked hedges in Chinese or English drafts without altering decision-relevant limits or evidence strength.
+- ✂️ **Clear non-paper Chinese writing and concise decision prose**: Cover Chinese technical proposals, reports, blogs, and post-translation polishing, while removing defensive disclaimers and stacked hedges in Chinese or English drafts without altering decision-relevant limits or evidence strength.
 
 ## 🧩 Skills
 
@@ -20,7 +20,7 @@ Latest published release: [V0.1.0](https://github.com/Eason412/doc-workflow/rele
 | --- | --- | --- |
 | [project-docs](skills/project-docs/SKILL.md) (Chinese) | Writing, reviewing, and updating READMEs, project documentation, and handover notes | [README guidelines](skills/project-docs/references/readme.md) (Chinese), [checker](skills/project-docs/scripts/check_readme.py) |
 | [translate](skills/translate/SKILL.md) (Chinese) | Chinese–English translation of papers, technical documents, and notes | [Domain-adaptation glossary](skills/translate/references/domain-adaptation.md) (Chinese–English) |
-| [writing-zh](skills/writing-zh/SKILL.md) (Chinese) | Chinese proposals, reports, thesis proposals, blogs, post-translation polishing, and Chinese/English defensive-wording edits or reviews | [Boundary examples](skills/writing-zh/references/examples.md) (Chinese) |
+| [writing-zh](skills/writing-zh/SKILL.md) (Chinese) | Chinese proposals, reports, blogs, post-translation polishing, and Chinese/English defensive-wording edits or reviews | [Boundary examples](skills/writing-zh/references/examples.md) (Chinese) |
 
 Each Skill is a complete installation unit and runs without another Skill or the repository root. Paper writing and academic Skills are maintained in the sister repository [paper-workflow](https://github.com/Eason412/paper-workflow), while other writing Skills belong in this repository.
 

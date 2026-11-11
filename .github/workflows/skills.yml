@@ -4,13 +4,19 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "skills/project-docs/**"
-      - "skills/md-export/**"
+      - "skills/**"
+      - "tests/**"
+      - "README.md"
+      - "README.en.md"
+      - "SETUP.md"
       - ".github/workflows/skills.yml"
   pull_request:
     paths:
-      - "skills/project-docs/**"
-      - "skills/md-export/**"
+      - "skills/**"
+      - "tests/**"
+      - "README.md"
+      - "README.en.md"
+      - "SETUP.md"
       - ".github/workflows/skills.yml"
 
 permissions:
@@ -20,6 +26,19 @@ env:
   PYTHONDONTWRITEBYTECODE: "1"
 
 jobs:
+  repository:
+    name: Repository and docs checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v10.2.0
+      - name: Skill structure and standalone link checks
+        run: uv run --no-project --python 3.12 python -m unittest discover -s tests -v
+      - name: README and SETUP checks
+        run: |
+          uv run --no-project --python 3.12 skills/project-docs/scripts/check_readme.py --repo . --pair README.md README.en.md --require-tracked --json
+          uv run --no-project --python 3.12 skills/project-docs/scripts/check_readme.py --repo . --file SETUP.md --require-tracked --json
+
   regression:
     name: ${{ matrix.skill }} regression
     runs-on: ubuntu-latest

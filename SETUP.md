@@ -35,7 +35,7 @@ Only prepare tools for the functions that will be used. The agent records what i
 | Function | Required tools | Source |
 | --- | --- | --- |
 | POSIX linking | POSIX `sh`, `mkdir`, `date`, `basename`, `dirname`, `readlink`, `rm`, `mv`, `ln` | [Linking script](scripts/link-skills.sh) |
-| Writing, translation, wording edits | An agent able to read the Skill and input files | Skill entry points (Chinese): [project-docs](skills/project-docs/SKILL.md), [translate](skills/translate/SKILL.md), [trim-hedging](skills/trim-hedging/SKILL.md) |
+| Writing, translation, wording edits | An agent able to read the Skill and input files | Skill entry points (Chinese): [project-docs](skills/project-docs/SKILL.md), [translate](skills/translate/SKILL.md), [writing-zh](skills/writing-zh/SKILL.md) |
 | README link checks | uv, Python ≥ 3.10, `markdown-it-py>=3` | [Checker inline metadata](skills/project-docs/scripts/check_readme.py) |
 | Markdown-to-Word export | uv, Python ≥ 3.10, `python-docx`, `pdfplumber`, Pandoc 3.9+ | [Exporter](skills/md-export/scripts/md_export.py) |
 | Word-to-PDF conversion | LibreOffice (`soffice`) | [Troubleshooting](skills/md-export/references/qa.md) (Chinese) |
@@ -121,7 +121,7 @@ Inspect the resulting targets:
 ```sh
 (
 for target in "${CODEX_HOME:-$HOME/.codex}/skills" "$HOME/.claude/skills"; do
-  for name in project-docs translate trim-hedging md-export; do
+  for name in project-docs translate writing-zh md-export; do
     test -L "$target/$name" || exit 1
     test "$(readlink "$target/$name")" = "$(pwd -P)/skills/$name" || exit 1
     test -f "$target/$name/SKILL.md" || exit 1

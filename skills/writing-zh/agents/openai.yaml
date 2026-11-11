@@ -1,0 +1,6 @@
+interface:
+  display_name: "非论文写作与措辞精简"
+  short_description: "技术方案、汇报、开题、博客、译后润色及中英文防御性措辞删减"
+  default_prompt: "使用 $writing-zh 改写这份方案，去掉套话与防御性措辞并保留关键限制。"
+policy:
+  allow_implicit_invocation: true

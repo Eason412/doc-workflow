@@ -1,6 +1,6 @@
 # Doc Workflow 项目规则
 
-先读上级 [opensource 工作区规则](../AGENTS.md)。本仓库维护三个相互独立的写作与文档类 Agent Skill：README 与项目文档同步、中英互译、非论文中文写作与措辞精简。**论文写作归 `paper-workflow`，其他写作归 `doc-workflow`。**
+先读上级 [opensource 工作区规则](../AGENTS.md)。本仓库维护三个相互独立的写作与文档类 Agent Skill：README 与项目文档同步、中英互译、非论文中文写作与措辞精简。**论文写作归 `thesis-skills`，其他写作归 `doc-workflow`。**
 
 ## 工作范围
 
@@ -23,7 +23,7 @@
 | 仓库与文本技能检查 | 在根目录运行 `PYTHONDONTWRITEBYTECODE=1 uv run --no-project python -m unittest discover -s tests -v` |
 | project-docs | 在 `skills/project-docs` 目录运行 `PYTHONDONTWRITEBYTECODE=1 uv run --no-project --with markdown-it-py python -m unittest discover -s tests -v` |
 
-- `translate`、`writing-zh` 为纯文本规范，重要修改的新旧对照盲测按技能 `rules-maintenance`「写作技能记录、复盘与盲测」执行。
+- `translate`、`writing-zh` 为纯文本规范，重要修改的新旧对照盲测按技能 `rules-maintenance`「写作技能纠偏与盲测」执行。
 - 修改 Skill 规范后检查 frontmatter 与相对链接；README 与 `SETUP.md` 改动用 `project-docs` 的 `check_readme.py` 检查链接与双语对齐。
 
 ## 数据与发布
